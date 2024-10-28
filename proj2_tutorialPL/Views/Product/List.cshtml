@@ -1,0 +1,28 @@
+﻿@model IEnumerable<proj2_tutorialPL.Models.Product>
+@{
+}
+<h1>List</h1>
+
+
+<ul>
+	@foreach (var product in Model)
+	{
+		<p>@product.Category- @product.Name - @product.Id</p>
+	}
+</ul>
+
+<h2>Warunek - tylko samochody</h2>
+
+<ul>
+	@foreach (var product in Model)
+	{
+		if (product.Category == "samochód")
+		{
+			<p>@product.Category- @product.Name - @product.Id</p>
+		}
+		else
+		{
+			<p>To nie był samochód</p>
+		}
+	}
+</ul>

@@ -1,0 +1,18 @@
+﻿@model IEnumerable<proj2_tutorialPL.Models.Product>
+
+	<h1>Lista produktów</h1>
+
+	<p1>
+		@foreach(var product in Model)
+	{
+		<li><b>@product.Name</b> - @product.Category - 
+			<a href="@Url.Action("Details", "Warehouse", new {Id = product.Id})">Szczegóły</a>
+			@using (Html.BeginForm("Delete", "Warehouse", FormMethod.Post))
+			{
+				<input type="hidden" name="Id" value="@product.Id" />
+				<button type="submit" >Usuń</button>
+			}
+		</li>
+	}
+
+	</p1>

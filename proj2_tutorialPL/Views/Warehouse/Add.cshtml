@@ -1,0 +1,19 @@
+﻿@model proj2_tutorialPL.Models.Product
+@{
+}
+<h1>Formularz dodajacy produkt do magazynu</h1>
+
+@using (Html.BeginForm("Add","Warehouse",FormMethod.Post))//akcja kontroler 
+{
+	@Html.ValidationSummary()
+	<span>Nazwa produktu</span>@Html.TextBoxFor(x=>x.Name)
+	<span>Opis produktu</span>@Html.TextBoxFor(x=>x.Description)
+	<span>Kategoria produktu</span>@Html.TextBoxFor(x=>x.Category)
+	<span>Model samochodu</span>@Html.TextBoxFor(x=>x.Model)
+	<span>Spalanie samochodu</span>@Html.TextBoxFor(x=>x.Fuel_burning)
+
+	<button type="submit">Wyślij formularz</button>
+}
+@Html.Partial("_AddProductForm",Model); 
+
+<p>ID po zapisie(TempData) <strong>@TempData["ProductID"]</strong></p>
