@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using proj2_tutorialPL.Models;
-
+// test
 namespace proj2_tutorialPL.Controllers
 {
 	public class AccountController : Controller
