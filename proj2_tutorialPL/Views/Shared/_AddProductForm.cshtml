@@ -3,21 +3,23 @@
 @using (Html.BeginForm("Add", "Warehouse", FormMethod.Post))//akcja kontroler
 {
 	@Html.ValidationSummary()
-	<span>Nazwa produktu</span>
-
+	<span>Nazwa</span>
 	@Html.TextBoxFor(x=>x.Name)
-	<span>Opis produktu</span>
 
-	@Html.TextBoxFor(x=>x.Description)
-	<span>Kategoria produktu</span>
-
-	@Html.TextBoxFor(x=>x.Model)
 	<span>Model samochodu</span>
+	@Html.TextBoxFor(x=>x.Model)
 
-	@Html.TextBoxFor(x=>x.Fuel_burning)
-	<span>Spalanie samochodu</span>
-
+	<span>Kategoria produktu</span>
 	@Html.TextBoxFor(x=>x.Category)
+
+	<span>Opis produktu</span>
+	@Html.TextBoxFor(x=>x.Description)
+
+	<span>Spalanie samochodu</span>
+	@Html.TextBoxFor(x=>x.Fuel_burning)
+	
+
+	
 
 	<button type="submit">Wyślij formularz</button>
 }

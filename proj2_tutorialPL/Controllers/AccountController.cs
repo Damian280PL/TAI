@@ -1,7 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using proj2_tutorialPL.Models;
+<<<<<<< Updated upstream
 // test
+=======
+using System.Runtime.ConstrainedExecution;
+
+>>>>>>> Stashed changes
 namespace proj2_tutorialPL.Controllers
 {
 	public class AccountController : Controller
@@ -55,7 +60,7 @@ namespace proj2_tutorialPL.Controllers
 			};
 
 			await _userManager.CreateAsync(newUser,userRegisterData.Password) ;
-
+			await _userManager.AddToRoleAsync(newUser, "Admin");
 			return RedirectToAction("Index", "Home");
 		}
 		[HttpGet]

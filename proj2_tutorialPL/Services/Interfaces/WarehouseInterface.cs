@@ -8,5 +8,7 @@ namespace proj2_tutorialPL.Services.Interfaces
 		List<Product> GetAll();
 		Product Get(int id);
 		int Delete(int id);
+
+		Task<List<Product>> GetAllAsync();
 	}
 }

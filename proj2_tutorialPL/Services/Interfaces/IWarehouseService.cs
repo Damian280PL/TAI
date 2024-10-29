@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.EntityFrameworkCore;
 using proj2_tutorialPL.Models;
 using proj2_tutorialPL.Services.Interfaces;
 
@@ -49,5 +50,12 @@ namespace proj2_tutorialPL.Services.Interfaces
 			};
 			return product.Id;
 		}
-	}
+
+
+        public async Task<List<Product>> GetAllAsync()
+        {
+            return await _context.Products.ToListAsync();
+        }
+
+    }
 }

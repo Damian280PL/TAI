@@ -8,11 +8,11 @@ namespace proj2_tutorialPL.Controllers
 	public class ProductController : Controller
 	{
 		private readonly IWarehouseService _warehouseService;
+        
         public ProductController(IWarehouseService warehouseService)
         {
-            
+            _warehouseService = warehouseService ?? throw new ArgumentNullException(nameof(warehouseService));
         }
-
 
         public IActionResult Index()
 		{
@@ -33,7 +33,31 @@ namespace proj2_tutorialPL.Controllers
 			};
 			return View(product);
 		}
-		public IActionResult List() {
+        public async Task<IActionResult> ListSearch(string searchString)
+        {
+            var productList = await _warehouseService.GetAllAsync();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                
+                var lowerCaseSearchString = searchString.ToLower();
+
+                // Filtrowanie z ignorowaniem wielkości liter
+                productList = productList
+                    .Where(n => n.Name != null && n.Model != null &&
+                                (n.Name.ToLower().Contains(lowerCaseSearchString) ||
+                                 n.Model.ToLower().Contains(lowerCaseSearchString)))
+                    .ToList();
+            }
+
+            
+            return View("~/Views/Warehouse/List.cshtml", productList);
+        }
+
+
+
+
+        public IActionResult List() {
 
 			var productList = _warehouseService.GetAll();
 			return View(productList);

@@ -25,6 +25,8 @@ namespace proj2_tutorialPL.Controllers
 			return View();
 		}
 		[HttpPost]
+
+		[Authorize(Roles ="Admin")]
 		public IActionResult Add(Product body)
 		{
 			

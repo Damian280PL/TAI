@@ -25,10 +25,12 @@
                         <li>
                             <a class="nav-link text-dark" asp-area="" asp-controller="Warehouse" asp-action="List">Lista produktów</a>
                         </li>
-
+                        @if(User.IsInRole("Admin")){
                         <li>
                             <a class="nav-link text-dark" asp-area="" asp-controller="Warehouse" asp-action="Add">Dodawanie produktu</a>
                         </li>
+                        }
+                       
                         @if(User.Identity.IsAuthenticated)
                         {
                          <li>

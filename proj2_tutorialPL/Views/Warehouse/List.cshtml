@@ -1,18 +1,39 @@
 ﻿@model IEnumerable<proj2_tutorialPL.Models.Product>
 
-	<h1>Lista produktów</h1>
+<h1>Dostępne samochody</h1>
 
-	<p1>
-		@foreach(var product in Model)
-	{
-		<li><b>@product.Name</b> - @product.Category - 
-			<a href="@Url.Action("Details", "Warehouse", new {Id = product.Id})">Szczegóły</a>
-			@using (Html.BeginForm("Delete", "Warehouse", FormMethod.Post))
-			{
-				<input type="hidden" name="Id" value="@product.Id" />
-				<button type="submit" >Usuń</button>
-			}
-		</li>
-	}
 
-	</p1>
+<form asp-action="ListSearch" asp-controller="Product" method="get">
+    <input name="searchString" class="form-control" type="search" placeholder="Szukaj po nazwie lub modelu" aria-label="Search" />
+    <button class="btn btn-dark" type="submit">Szukaj po nazwie</button>
+</form>
+
+
+<a asp-action="ListSearch" asp-controller="Product" class="text-dark">Usuń wszystkie filtry</a>
+
+<hr />
+
+<!-- Lista produktów -->
+@if (Model != null && Model.Any())
+{
+    <ul>
+        @foreach (var product in Model)
+        {
+            <li>
+                <b>@product.Name @product.Model</b> - @product.Category
+                - <a href="@Url.Action("Details", "Warehouse", new { Id = product.Id })">Szczegóły</a>
+
+                <!-- Formularz do usuwania produktu -->
+                @using (Html.BeginForm("Delete", "Warehouse", FormMethod.Post))
+                {
+                    <input type="hidden" name="Id" value="@product.Id" />
+                    <button type="submit" class="btn btn-danger btn-sm">Usuń</button>
+                }
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>Brak produktów do wyświetlenia.</p>
+}
