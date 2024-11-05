@@ -1,0 +1,14 @@
+/* App.css */
+
+body {
+  font-family: Arial, sans-serif;
+}
+
+.navbar {
+  background-color: #f8f9fa;
+}
+
+.footer {
+  padding: 1rem 0;
+  background-color: #f8f9fa;
+}

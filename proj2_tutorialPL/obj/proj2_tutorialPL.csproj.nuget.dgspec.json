@@ -58,9 +58,17 @@
               "target": "Package",
               "version": "[6.0.0, )"
             },
+            "React.Core": {
+              "target": "Package",
+              "version": "[5.2.12, )"
+            },
             "Swagger-Net": {
               "target": "Package",
               "version": "[8.5.12.1, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[6.9.0, )"
             }
           },
           "imports": [

@@ -1,39 +1,49 @@
 using proj2_tutorialPL;
 using proj2_tutorialPL.Services.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using proj2_tutorialPL.Models;
+using proj2_tutorialPL.Services; // Importuj rzeczywist¹ implementacjê IWarehouseService, np. WarehouseService
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Rejestracja us³ugi IWarehouseService z odpowiedni¹ implementacj¹
-builder.Services.AddScoped<IWarehouseService, IWarehouseService>();
+builder.Services.AddScoped<IWarehouseService, IWarehouseService>(); // Upewnij siê, ¿e WarehouseService jest rzeczywist¹ implementacj¹
 
+// Konfiguracja CORS, aby umo¿liwiæ po³¹czenia z React
+builder.Services.AddCors(options =>
+{
+	options.AddPolicy("AllowReactApp", policy =>
+	{
+		policy.WithOrigins("http://localhost:3000") 
+			  .AllowAnyHeader()
+			  .AllowAnyMethod();
+	});
+});
 
+// Konfiguracja DbContext
 builder.Services.AddDbContext<DbTestContext>(options =>
 	options.UseSqlServer(@"Data Source=DESKTOP-RV5HS5R\MSSQLSERVER2022;Initial Catalog=DbTest;Integrated Security=True")
 );
 
-// Konfiguracja Identity z poprawn¹ konfiguracj¹ i obs³ug¹ DbTestContext
-builder.Services.AddIdentity<UserModel, IdentityRole>(async options =>
+// Konfiguracja Identity z DbTestContext
+builder.Services.AddIdentity<UserModel, IdentityRole>(options =>
 {
 	options.Password.RequireDigit = false;
 	options.Password.RequiredLength = 4;
 	options.Password.RequireNonAlphanumeric = false;
 	options.Password.RequireUppercase = false;
 	options.Password.RequireLowercase = false;
-
-	
 })
-	.AddEntityFrameworkStores<DbTestContext>()
-	.AddDefaultTokenProviders();
-// Dodaj MVC lub inne us³ugi
+.AddEntityFrameworkStores<DbTestContext>()
+.AddDefaultTokenProviders();
+
+// Dodaj MVC i inne us³ugi
 builder.Services.AddControllersWithViews();
-
-
 
 var app = builder.Build();
 
+// Dodawanie ról po uruchomieniu aplikacji
 using (var scope = app.Services.CreateScope())
 {
 	var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
@@ -60,10 +70,13 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication();
 
+app.UseCors("AllowReactApp");
+
+app.UseAuthentication();
 app.UseAuthorization();
 
+// Konfiguracja trasy
 app.MapControllerRoute(
 	name: "default",
 	pattern: "{controller=Home}/{action=Index}/{id?}");

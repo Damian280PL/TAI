@@ -25,29 +25,27 @@
                         <li>
                             <a class="nav-link text-dark" asp-area="" asp-controller="Warehouse" asp-action="List">Lista produktów</a>
                         </li>
-                        @if(User.IsInRole("Admin")){
+                        
                         <li>
                             <a class="nav-link text-dark" asp-area="" asp-controller="Warehouse" asp-action="Add">Dodawanie produktu</a>
                         </li>
-                        }
+                        
                        
-                        @if(User.Identity.IsAuthenticated)
-                        {
+                       
                          <li>
                             <a class="nav-link text-dark" asp-area="" asp-controller="Rent" asp-action="Rent">Wypożycz</a>
                          </li>
                         <li>
                             <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="LogOut">Wyloguj</a>
                         </li>
-                        }else
-                        {
+
                         <li>
                             <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Logowanie</a>
                         </li>
                         <li>
                             <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register">Rejestracja</a>
                         </li>
-                        }
+                        
                        
                     </ul>
                 </div>

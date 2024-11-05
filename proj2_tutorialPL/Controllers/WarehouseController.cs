@@ -5,7 +5,7 @@ using proj2_tutorialPL.Services.Interfaces;
 
 namespace proj2_tutorialPL.Controllers
 {
-	[Authorize]
+	
 	public class WarehouseController : Controller
 	{
 		private readonly IWarehouseService _warehouseService;
@@ -26,7 +26,7 @@ namespace proj2_tutorialPL.Controllers
 		}
 		[HttpPost]
 
-		[Authorize(Roles ="Admin")]
+		
 		public IActionResult Add(Product body)
 		{
 			

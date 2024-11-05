@@ -1,56 +1,29 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using proj2_tutorialPL.Models;
-<<<<<<< Updated upstream
-// test
-=======
-using System.Runtime.ConstrainedExecution;
+using System.Threading.Tasks;
 
->>>>>>> Stashed changes
 namespace proj2_tutorialPL.Controllers
 {
-	public class AccountController : Controller
+	[ApiController]
+	[Route("Account")]
+	public class AccountController : ControllerBase
 	{
-		private readonly UserManager<UserModel>_userManager;
-
+		private readonly UserManager<UserModel> _userManager;
 		private readonly SignInManager<UserModel> _signInManager;
 
 		public AccountController(UserManager<UserModel> userManager, SignInManager<UserModel> signInManager)
-        {
+		{
 			_userManager = userManager;
 			_signInManager = signInManager;
 		}
 
-
-	
-
-		[HttpGet]
-		public IActionResult Login()
-		{
-			return View();
-		}
-		[HttpPost]
-		public async Task<IActionResult> Login(Login userLoginData)
+		[HttpPost("Register")]
+		public async Task<IActionResult> Register([FromBody] Register userRegisterData)
 		{
 			if (!ModelState.IsValid)
 			{
-				return View(userLoginData);
-			}
-
-			await _signInManager.PasswordSignInAsync(userLoginData.UserName,userLoginData.Password, false, false);//3 to czy jak wyjdzie z przegladarki to czy ma wylogowac
-			return RedirectToAction("Index", "Home");
-		}
-		[HttpGet]
-		public IActionResult Register()
-		{
-			return View();
-		}
-		[HttpPost]
-		public async Task<IActionResult> Register(Register userRegisterData)
-		{
-			if(!ModelState.IsValid)
-			{
-				return View(userRegisterData);
+				return BadRequest(ModelState);
 			}
 
 			var newUser = new UserModel
@@ -59,15 +32,38 @@ namespace proj2_tutorialPL.Controllers
 				UserName = userRegisterData.UserName
 			};
 
-			await _userManager.CreateAsync(newUser,userRegisterData.Password) ;
+			var result = await _userManager.CreateAsync(newUser, userRegisterData.Password);
+			if (!result.Succeeded)
+			{
+				return BadRequest(result.Errors);
+			}
+
 			await _userManager.AddToRoleAsync(newUser, "Admin");
-			return RedirectToAction("Index", "Home");
+			return Ok(new { Message = "Registration successful!" });
 		}
-		[HttpGet]
-		public async Task<IActionResult> LogOut()
+
+		[HttpPost("Login")]
+		public async Task<IActionResult> Login([FromBody] Login userLoginData)
+		{
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
+
+			var result = await _signInManager.PasswordSignInAsync(userLoginData.UserName, userLoginData.Password, false, false);
+			if (!result.Succeeded)
+			{
+				return Unauthorized(new { Message = "Invalid login attempt." });
+			}
+
+			return Ok(new { Message = "Login successful!" });
+		}
+
+		[HttpGet("Logout")]
+		public async Task<IActionResult> Logout()
 		{
 			await _signInManager.SignOutAsync();
-			return RedirectToAction("Index", "Home");
-        }
+			return Ok(new { Message = "Logout successful!" });
+		}
 	}
 }

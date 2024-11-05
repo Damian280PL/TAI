@@ -1,73 +1,46 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using proj2_tutorialPL.Models;
 using proj2_tutorialPL.Services.Interfaces;
-using System.Xml.Linq;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace proj2_tutorialPL.Controllers
 {
-	public class ProductController : Controller
+	[ApiController]
+	[Route("api/[controller]")]
+	public class ProductController : ControllerBase
 	{
 		private readonly IWarehouseService _warehouseService;
-        
-        public ProductController(IWarehouseService warehouseService)
-        {
-            _warehouseService = warehouseService ?? throw new ArgumentNullException(nameof(warehouseService));
-        }
 
-        public IActionResult Index()
+		public ProductController(IWarehouseService warehouseService)
 		{
-			return View();
+			_warehouseService = warehouseService ?? throw new ArgumentNullException(nameof(warehouseService));
 		}
-		public IActionResult Product()
+
+		[HttpGet]
+		public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
 		{
-			var product = new Models.Product
+			var productList = await _warehouseService.GetAllAsync();
+			return Ok(productList); // Returns a JSON response
+		}
+
+		[HttpGet("search")]
+		public async Task<ActionResult<IEnumerable<Product>>> SearchProducts(string searchString)
+		{
+			var productList = await _warehouseService.GetAllAsync();
+
+			if (!string.IsNullOrEmpty(searchString))
 			{
-				Id = 1,
-				Category = "samochód",
-				Description = "Super samochód",
-				Name = "Bmw M6",
-				Model = "ZX2",
-				Fuel_burning = 6
-				
+				var lowerCaseSearchString = searchString.ToLower();
+				productList = productList
+					.Where(n => n.Name != null && n.Model != null &&
+								(n.Name.ToLower().Contains(lowerCaseSearchString) ||
+								 n.Model.ToLower().Contains(lowerCaseSearchString)))
+					.ToList();
+			}
 
-			};
-			return View(product);
-		}
-        public async Task<IActionResult> ListSearch(string searchString)
-        {
-            var productList = await _warehouseService.GetAllAsync();
-
-            if (!string.IsNullOrEmpty(searchString))
-            {
-                
-                var lowerCaseSearchString = searchString.ToLower();
-
-                // Filtrowanie z ignorowaniem wielkości liter
-                productList = productList
-                    .Where(n => n.Name != null && n.Model != null &&
-                                (n.Name.ToLower().Contains(lowerCaseSearchString) ||
-                                 n.Model.ToLower().Contains(lowerCaseSearchString)))
-                    .ToList();
-            }
-
-            
-            return View("~/Views/Warehouse/List.cshtml", productList);
-        }
-
-
-
-
-        public IActionResult List() {
-
-			var productList = _warehouseService.GetAll();
-			return View(productList);
-		}
-		public IActionResult Data() {
-
-			ViewBag.Name = "Jarek";
-			ViewData["Surename"] = "Kowalski";
-			TempData["SecondName"] = "Piotrek";
-			return View();
+			return Ok(productList); // Returns the filtered products as JSON
 		}
 	}
 }
