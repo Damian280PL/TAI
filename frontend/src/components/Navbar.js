@@ -1,50 +1,76 @@
-import React from 'react'; 
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from './useAuth'; // Zaktualizuj import
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from './AuthContext'; // Hook do uwierzytelniania
 
-function Navbar() {
-    const { isAuthenticated, logout } = useAuth();
-    const navigate = useNavigate();
+const Navbar = () => {
+  const { isAuthenticated, login, keycloak, isAdmin } = useAuth(); // Pobranie danych z kontekstu
 
-    // Logowanie stanu autoryzacji
-    console.log('Zalogowany:', isAuthenticated);
+  const handleLogin = () => {
+    console.log('Login button clicked');
+    login(); // Funkcja logowania
+  };
 
-    const handleLogout = () => {
-        logout(); // Funkcja wylogowująca z Keycloak
-        navigate('/login'); // Przekierowanie na stronę logowania po wylogowaniu
-    };
+  const handleLogout = async () => {
+    console.log('Logout button clicked');
+    if (keycloak) {
+      try {
+        // Wylogowanie z Keycloak
+        await keycloak.logout({
+          redirectUri: window.location.origin + '/login', // Przekierowanie na stronę logowania po wylogowaniu
+        });
+      } catch (err) {
+        console.error('Błąd podczas wylogowywania:', err);
+      }
+    } else {
+      console.error('Brak instancji Keycloak');
+    }
+  };
 
-    return (
-        <nav className="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div className="container-fluid">
-                <Link className="navbar-brand" to="/">Aplikacja do nauki</Link>
-                <div className="collapse navbar-collapse">
-                    <ul className="navbar-nav flex-grow-1">
-                        <li className="nav-item">
-                            <Link className="nav-link text-dark" to="/">Home</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link className="nav-link text-dark" to="/products">Lista produktów</Link>
-                        </li>
-                        {isAuthenticated ? (
-                            <li className="nav-item">
-                                <button className="nav-link text-dark" onClick={handleLogout}>Wyloguj</button>
-                            </li>
-                        ) : (
-                            <>
-                                <li className="nav-item">
-                                    <Link className="nav-link text-dark" to="/login">Logowanie</Link>
-                                </li>
-                                <li className="nav-item">
-                                    <Link className="nav-link text-dark" to="/register">Rejestracja</Link>
-                                </li>
-                            </>
-                        )}
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    );
-}
+  return (
+    <nav style={{ padding: '1rem', backgroundColor: '#f8f9fa', borderBottom: '1px solid #ddd' }}>
+      <ul style={{ display: 'flex', listStyle: 'none', margin: 0, padding: 0 }}>
+        <li style={{ marginRight: '1rem' }}>
+          <Link to="/">Strona główna</Link>
+        </li> 
+        {isAuthenticated && isAdmin && (
+          <li style={{ marginRight: '1rem' }}>
+            <Link to="/add-car">Dodaj samochód</Link>
+          </li>
+        )}
+           {isAuthenticated && isAdmin && (
+          <li style={{ marginRight: '1rem' }}>
+            <Link to="/orders">Zamówienia</Link>
+          </li>
+        )}
+      
+        {isAuthenticated && (
+          <li style={{ marginRight: '1rem' }}>
+            <Link to="/user-panel">Panel użytkownika</Link>
+          </li>
+        )}
+        <li style={{ marginRight: '1rem' }}>
+          {isAuthenticated ? (
+            <button
+              onClick={handleLogout}
+              style={{ background: 'none', border: 'none', padding: 0, color: 'blue', cursor: 'pointer' }}
+            >
+              Logout
+            </button>
+          ) : (
+            <button
+              onClick={handleLogin}
+              style={{ background: 'none', border: 'none', padding: 0, color: 'blue', cursor: 'pointer' }}
+            >
+              Login
+            </button>
+          )}
+        </li>
+        <li style={{ marginRight: '1rem' }}>
+          <Link to="/products">Products</Link>
+        </li>
+      </ul>
+    </nav>
+  );
+};
 
 export default Navbar;

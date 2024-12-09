@@ -1,4 +1,5 @@
 is_global = true
+build_property.RefitInternalNamespace = proj2_tutorialPL
 build_property.TargetFramework = net6.0
 build_property.TargetPlatformMinVersion = 
 build_property.UsingMicrosoftNETSdkWeb = true
@@ -22,6 +23,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/damia/source/repos/proj2_tutorialPL/proj2_tutorialPL/Views/Account/Register.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxSZWdpc3Rlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/damia/source/repos/proj2_tutorialPL/proj2_tutorialPL/Views/Driver/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRHJpdmVyXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/damia/source/repos/proj2_tutorialPL/proj2_tutorialPL/Views/Home/Index.cshtml]

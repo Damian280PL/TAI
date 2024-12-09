@@ -1,34 +1,57 @@
-// src/components/AuthContext.js
-import React, { createContext, useState, useEffect } from 'react';
-import keycloak from '../Keycloak';
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import Keycloak from 'keycloak-js';
 
 export const AuthContext = createContext();
 
+export const useAuth = () => {
+  return useContext(AuthContext);
+};
+
 export const AuthProvider = ({ children }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [keycloakInstance, setKeycloakInstance] = useState(null);
+  const keycloakOptions = {
+    url: "http://localhost:8080/",
+    realm: "TAI",
+    clientId: "dotnet",
+  };
 
-    useEffect(() => {
-        // Inicjalizuj Keycloak bez automatycznego logowania
-        setKeycloakInstance(keycloak);
-    }, []);
+  const [keycloak, setKeycloak] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userSub, setUserSub] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false); // Admin status
 
-    const login = () => {
-        keycloak.init({ onLoad: 'login-required' }).then(authenticated => {
-            setIsAuthenticated(authenticated);
-        }).catch(err => {
-            console.error("Keycloak initialization failed:", err);
-        });
+  useEffect(() => {
+    const initKeycloak = async () => {
+      const keycloakInstance = new Keycloak(keycloakOptions);
+
+      try {
+        const authenticated = await keycloakInstance.init({ onLoad: 'login-required' });
+        setIsAuthenticated(authenticated);
+        setKeycloak(keycloakInstance);
+
+        if (authenticated) {
+          // Set the userSub value from the token
+          setUserSub(keycloakInstance.tokenParsed?.sub);
+
+          // Check for admin role in token
+          const adminRoles = keycloakInstance.tokenParsed?.Admin || [];
+          const isAdminRole = adminRoles.includes('Adminuma_authorization'); // Adjust role name if necessary
+          setIsAdmin(isAdminRole);
+
+          // Log the full token and parsed token
+          console.log("User Token:", keycloakInstance.token);
+          console.log("Parsed Token:", keycloakInstance.tokenParsed);
+        }
+      } catch (error) {
+        console.error("Failed to initialize Keycloak:", error);
+      }
     };
 
-    const logout = () => {
-        keycloak.logout();
-        setIsAuthenticated(false);
-    };
+    initKeycloak();
+  }, []);
 
-    return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout, keycloakInstance }}>
-            {children}
-        </AuthContext.Provider>
-    );
+  return (
+    <AuthContext.Provider value={{ keycloak, isAuthenticated, userSub, isAdmin }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };

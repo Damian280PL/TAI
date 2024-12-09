@@ -1,18 +1,17 @@
-// src/components/Login.js
-import React from 'react';
-import { useAuth } from './useAuth'; // Upewnij się, że to jest poprawny import
+import React, { useContext } from 'react';
+import { AuthContext } from './AuthContext';
 
 const Login = () => {
-    const { login } = useAuth(); // Użycie hooka useAuth
+    const { keycloak } = useContext(AuthContext);
 
     const handleLogin = () => {
-        login(); // Funkcja logująca
+        keycloak.login();
     };
 
     return (
         <div>
-            <h2>Logowanie</h2>
-            <button onClick={handleLogin}>Zaloguj się</button>
+            <h2>Login</h2>
+            <button onClick={handleLogin}>Login with Keycloak</button>
         </div>
     );
 };

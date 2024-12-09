@@ -35,7 +35,7 @@ namespace proj2_tutorialPL.Controllers
 				return View(body);//po wyrzuceniu error wpisane dane zostana w formularzu
 			}
 
-			var id = _warehouseService.Save(body);
+			var id = _warehouseService.SaveAsync(body);
 
 			TempData["ProductID"] = id;
 
@@ -56,7 +56,7 @@ namespace proj2_tutorialPL.Controllers
 		[HttpPost]
 		public IActionResult Delete(int id)
 		{
-			_warehouseService.Delete(id);
+			_warehouseService.DeleteAsync(id);
 			return RedirectToAction("List");
 		}
 	}

@@ -2,13 +2,14 @@
 
 namespace proj2_tutorialPL.Services.Interfaces
 {
-	public interface WarehouseInterface
-	{
-		int Save(Product product);
-		List<Product> GetAll();
-		Product Get(int id);
-		int Delete(int id);
-
-		Task<List<Product>> GetAllAsync();
-	}
+    public interface IWarehouseService
+    {
+        Task<List<Product>> GetAllAsync();
+        Task<Product> GetByIdAsync(int id);
+        Task UpdateAsync(Product product);
+        Task<int> SaveAsync(Product product);
+        Task DeleteAsync(int id);
+        Product Get(int id);
+        List<Product> GetAll();
+    }
 }
