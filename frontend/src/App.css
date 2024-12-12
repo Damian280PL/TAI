@@ -1,31 +1,14 @@
-// src/App.js
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
+/* App.css */
 
-import Navbar from './components/Navbar';
-import Register from './components/Register';
-import Login from './components/Login';
-import ProductList from './components/ProductList';
-import AddCar from './components/AddCar';
+body {
+  font-family: Arial, sans-serif;
+}
 
-const App = () => {
-  return (
-    <AuthProvider>
-      <Router>
-        <Navbar />
-        <div className="container">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/products" element={<ProductList />} />
-            <Route path="/add-car" element={<AddCar />} />
-          </Routes>
-        </div>
-      </Router>
-    </AuthProvider>
-  );
-};
+.navbar {
+  background-color: #f8f9fa;
+}
 
-export default App;
+.footer {
+  padding: 1rem 0;
+  background-color: #f8f9fa;
+}

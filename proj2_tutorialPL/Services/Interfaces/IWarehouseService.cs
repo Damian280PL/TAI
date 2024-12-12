@@ -1,82 +1,61 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+using Microsoft.EntityFrameworkCore;
 using proj2_tutorialPL.Models;
-using proj2_tutorialPL.Services;
 using proj2_tutorialPL.Services.Interfaces;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace proj2_tutorialPL.Services
+namespace proj2_tutorialPL.Services.Interfaces
 {
-    public class WarehouseService : IWarehouseService
-    {
-        private readonly DbTestContext _context;
+	public class IWarehouseService : WarehouseInterface
+	{
 
-        public WarehouseService(DbTestContext context)
-        {
-            _context = context;
-        }
+		private readonly DbTestContext _context;
 
-        public async Task DeleteAsync(int id)
-        {
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
-            {
-                throw new ArgumentNullException(nameof(product), "Product not found for deletion.");
-            }
+		public IWarehouseService(DbTestContext context)
+		{
+			_context = context;
+		}
 
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
-        }
+		public int Delete(int id)
+		{
+			var product = _context.Products.Find(id);
+			_context.Products.Remove(product);	
+			_context.SaveChanges();
 
-        public Product Get(int id)
-        {
-            return _context.Products.Find(id);
-        }
+			return id;
+		}
 
-        public List<Product> GetAll()
-        {
-            return _context.Products.ToList();
-        }
+		public Product Get(int id)
+		{
+			var product = _context.Products.Find(id);
 
-        public async Task<int> SaveAsync(Product product)
-        {
-            await _context.Products.AddAsync(product);
-            await _context.SaveChangesAsync();
-            return product.Id;
-        }
+			return product;
+		}
+
+		public List<Product> GetAll()
+		{
+			//zwarca queerable wiec trzeba tolist
+			var products = _context.Products.ToList();
+
+			return products;
+		}
+
+		public int Save(Product product)
+		{
+
+			_context.Products.Add(product);
+
+			if(_context.SaveChanges() > 0)
+				{
+					System.Console.WriteLine("Sukces");
+			};
+			return product.Id;
+		}
+
 
         public async Task<List<Product>> GetAllAsync()
         {
             return await _context.Products.ToListAsync();
         }
 
-        public async Task<Product> GetByIdAsync(int id)
-        {
-            return await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
-        }
-
-        public async Task UpdateAsync(Product product)
-        {
-            var existingProduct = await _context.Products.FindAsync(product.Id);
-
-            if (existingProduct == null)
-            {
-                throw new ArgumentNullException(nameof(product), "Product not found for update.");
-            }
-
-            
-            existingProduct.Name = product.Name;
-            existingProduct.Model = product.Model;
-            existingProduct.Category = product.Category;
-            existingProduct.Transmission = product.Transmission;
-            existingProduct.Seats = product.Seats;
-            existingProduct.Fuel_burning = product.Fuel_burning;
-            existingProduct.RentalPricePerDay = product.RentalPricePerDay;
-
-            _context.Products.Update(existingProduct);
-            await _context.SaveChangesAsync();
-        }
     }
-
 }
-

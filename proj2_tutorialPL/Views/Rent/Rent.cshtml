@@ -1,13 +1,12 @@
 ﻿@model proj2_tutorialPL.Models.Rent
 
-<div>
-    <h2>Szczegóły wypożyczenia</h2>
-    <p>Produkt ID: @Model.ProductId</p>
-    <p>Kierowca ID: @Model.DriverId</p>
-    <p>Data wynajmu: @Model.RentalDate.ToShortDateString()</p>
-    <p>Data zwrotu: @(Model.ReturnDate.HasValue ? Model.ReturnDate.Value.ToShortDateString() : "N/A")</p>
-    <p>Koszt wynajmu: @Model.RentalCost PLN</p>
-    <p>Status: @Model.Status</p>
-    <p>Pakiet ochrony: @Model.ProtectionPackage</p>
-    <p>User subL @Model.UserSub</p>
-</div>
+<h2>Wypożyczenie</h2>
+<p>Produkt: @Model.Product.Name</p>
+<p>Model: @Model.Product.Model</p>
+<p>Spalanie: @Model.Product.Fuel_burning</p>
+<p>Opis: @Model.Product.Description</p>
+<p>Kategoria: @Model.Product.Category</p>
+<p>Data wypożyczenia: @Model.RentalDate</p>
+<p>Data zwrotu: @Model.ReturnDate</p>
+<p>Koszt wypożyczenia: @Model.RentalCost</p>
+<p>Status: @Model.Status</p>

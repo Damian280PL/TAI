@@ -1,174 +1,59 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using proj2_tutorialPL.Models;
+using System; // dodane dla DateTime
+using Microsoft.AspNetCore.Identity; // dodane dla UserManager
 
 namespace proj2_tutorialPL.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class RentController : ControllerBase
-    {
-        private readonly DbTestContext _context;
+	public class RentController : Controller
+	{
+		private readonly UserManager<UserModel> _userManager; // UserManager do obsługi użytkowników
 
-        public RentController(DbTestContext context)
-        {
-            _context = context;
-        }
+		public RentController(UserManager<UserModel> userManager)
+		{
+			_userManager = userManager;
+		}
 
-        // GET: api/rent/user?userSub={userSub}
-        [HttpGet("user")]
-        public async Task<ActionResult<IEnumerable<Rent>>> GetRentsByUserSub([FromQuery] string userSub)
-        {
-            if (string.IsNullOrEmpty(userSub))
-            {
-                return BadRequest(new { error = "UserSub is required." });
-            }
+		public IActionResult Index()
+		{
+			return View();
+		}
 
-            var userRents = await _context.Rents
-                .Include(r => r.Driver)
-                .Include(r => r.Product)
-                .Where(r => r.UserSub == userSub)
-                .ToListAsync();
+		public async Task<IActionResult> Rent()
+		{
+			// Pobieranie aktualnie zalogowanego użytkownika
+			var user = await _userManager.GetUserAsync(User);
+			if (user == null)
+			{
+				return Unauthorized(); // Użytkownik nie jest zalogowany
+			}
 
-            if (!userRents.Any())
-            {
-                return NotFound(new { error = "No rents found for the specified user." });
-            }
-
-            return Ok(userRents);
-        }
-
-        // POST: api/rent
-        [HttpPost]
-        public async Task<IActionResult> CreateRent([FromBody] Rent rent)
-        {
-            if (rent == null)
-            {
-                return BadRequest(new { error = "Rent data is null." });
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (rent.DriverId <= 0 || rent.ProductId <= 0)
-            {
-                return BadRequest(new { error = "DriverId and ProductId must be greater than zero." });
-            }
-
-            if (string.IsNullOrEmpty(rent.UserSub))
-            {
-                return BadRequest(new { error = "UserSub is required." });
-            }
-
-            try
-            {
-                _context.Rents.Add(rent);
-                await _context.SaveChangesAsync();
-                return CreatedAtAction(nameof(GetRent), new { id = rent.Id }, rent);
-            }
-            catch (DbUpdateException ex)
-            {
-                return StatusCode(500, new { error = $"An error occurred while saving rent: {ex.Message}" });
-            }
-        }
-
-        // GET: api/rent/{id}
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetRent(int id)
-        {
-            var rent = await _context.Rents
-                .Include(r => r.Driver)
-                .Include(r => r.Product)
-                .FirstOrDefaultAsync(r => r.Id == id);
-
-            if (rent == null)
-            {
-                return NotFound(new { error = "Rent not found." });
-            }
-
-            return Ok(rent);
-        }
-        [HttpGet]
-        public async Task<IActionResult> GetAllRents()
-        {
-            var rents = await _context.Rents
-                .Include(r => r.Driver)
-                .Include(r => r.Product)
-                .ToListAsync();
-
-            return Ok(rents);
-        }
-
-        // PUT: api/rent/{id}
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateRent(int id, [FromBody] Rent rent)
-        {
-            if (id != rent.Id)
-            {
-                return BadRequest(new { error = "Rent ID mismatch." });
-            }
-
-            _context.Entry(rent).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-                return NoContent();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.Rents.Any(e => e.Id == id))
-                {
-                    return NotFound(new { error = "Rent not found." });
-                }
-                else
-                {
-                    throw;
-                }
-            }
-        }
-        // PUT: api/rent/{rentId}/update-status
-        [HttpPut("{rentId}/update-status")]
-        public async Task<IActionResult> UpdateRentStatus(int rentId, [FromBody] UpdateStatusRequest request)
-        {
-            var rent = await _context.Rents.FirstOrDefaultAsync(r => r.Id == rentId);
-
-            if (rent == null)
-            {
-                return NotFound("Rent not found.");
-            }
-
-            rent.Status = request.Status;
-            _context.Rents.Update(rent);
-            await _context.SaveChangesAsync();
-
-            return Ok(new { Message = "Rent status updated successfully." });
-        }
+			// Tworzenie obiektu Product
+			var product = new Product
+			{
+				Id = 1,
+				Name = "Bmw M6",
+				Model = "ZX2",
+				Fuel_burning = 6,
+				Description = "Super samochód",
+				Category = "samochód"
+			};
 
 
-        public class UpdateStatusRequest
-        {
-            public string Status { get; set; }
-        }
-        // DELETE: api/rent/{id}
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRent(int id)
-        {
-            var rent = await _context.Rents.FindAsync(id);
-            if (rent == null)
-            {
-                return NotFound(new { error = "Rent not found." });
-            }
+			// Tworzenie obiektu Rent z powiązanym produktem i użytkownikiem
+			var rent = new Rent
+			{
+				Id = 1,
+				User = user, // Powiązanie wypożyczenia z użytkownikiem
+				Product = product, // Powiązanie produktu z wypożyczeniem
+				RentalDate = DateTime.Now, // Data wypożyczenia
+				ReturnDate = DateTime.Now.AddDays(7), // Przykładowa data zwrotu po 7 dniach
+				RentalCost = 1000, // Koszt wypożyczenia
+				Status = "Active" // Status wypożyczenia
+			};
 
-            _context.Rents.Remove(rent);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-    }
+			// Zwracamy widok z modelem Rent
+			return View(rent);
+		}
+	}
 }
