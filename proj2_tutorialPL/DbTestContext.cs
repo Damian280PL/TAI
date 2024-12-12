@@ -4,33 +4,33 @@ using proj2_tutorialPL.Models;
 
 namespace proj2_tutorialPL
 {
-	public class DbTestContext : IdentityDbContext<UserModel>
-	{
-		public DbTestContext(DbContextOptions<DbTestContext> options) : base(options) { }
+    public class DbTestContext : IdentityDbContext<UserModel>
+    {
+        public DbTestContext(DbContextOptions<DbTestContext> options) : base(options) { }
+        public DbSet<Rent> Rents { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Driver> Drivers { get; set; }
 
-		
-		public DbSet<Product> Products { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
 
-		
-		public DbSet<Rent> Rents { get; set; }
+            // Konfiguracja relacji dla Rent
+            modelBuilder.Entity<Rent>()
+                .HasOne(r => r.Driver)
+                .WithMany()
+                .HasForeignKey(r => r.DriverId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-		protected override void OnModelCreating(ModelBuilder builder)
-		{
-			base.OnModelCreating(builder);
+            modelBuilder.Entity<Rent>()
+                .HasOne(r => r.Product)
+                .WithMany()
+                .HasForeignKey(r => r.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
 
-			// Configure relationship between Rent and UserModel (AspNetUsers)
-			builder.Entity<Rent>()
-				.HasOne(r => r.User)               // Rent has one User
-				.WithMany()                        // A user can have many rents
-				.HasForeignKey(r => r.UserId)      // UserId is a foreign key
-				.OnDelete(DeleteBehavior.Restrict); // Prevent cascading delete
 
-			// Configure relationship between Rent and Product
-			builder.Entity<Rent>()
-				.HasOne(r => r.Product)            // Rent has one Product
-				.WithMany()                        // A product can have many rents
-				.HasForeignKey(r => r.ProductId)   // ProductId is a foreign key
-				.OnDelete(DeleteBehavior.Restrict); // Prevent cascading delete
-		}
-	}
+    }
+
 }
+
