@@ -1,0 +1,55 @@
+.why-us {
+    max-width: 40%; /* Zmniejszamy szerokość sekcji */
+    text-align: left; /* Wyrównanie tekstu do lewej */
+    margin-left: 0; /* Przypięcie do lewej strony */
+    margin-right: auto; /* Zapobiega centrowaniu */
+}
+
+
+.why-us-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.benefits-container {
+    display: flex;
+    flex-direction: column; /* Ustawienie kart w pionie */
+    align-items: flex-start; /* Przypięcie kart do lewej */
+}
+
+.benefit-card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    width: 250px;
+    text-align: center;
+    transition: transform 0.3s ease-in-out;
+}
+
+.benefit-card:hover {
+    transform: scale(1.05);
+}
+
+.benefit-icon {
+    font-size: 40px;
+    color: #ff8c00;
+    margin-bottom: 10px;
+}
+.why-us-container {
+    position: absolute;
+    top: -800px;  /* Przesunięcie jeszcze wyżej */
+    right: 40px;  /* Dopasowanie do prawej strony */
+    width: 320px; /* Stała szerokość */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+
+.why-us-container .card {
+    width: 100%; /* Rozciągnięcie kart na całą szerokość */
+    margin-bottom: 15px; /* Większy odstęp między kartami */
+}
+
